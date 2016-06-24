@@ -1,0 +1,6 @@
+pyside
+traits
+traitsui
+requests
+-e git+https://github.com/Krypticdator/FSTTRPGCharacterLoader.git#egg=FSTTRPGCharacterLoader
+-e git+https://github.com/Krypticdator/FSTTRPGTables27.git.git#egg=FSTTRPGTablesP27
