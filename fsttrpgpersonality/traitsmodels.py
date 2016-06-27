@@ -2,7 +2,7 @@ from __future__ import print_function
 from traits.api import *
 from traitsui.api import *
 
-from models import Table
+from fsttrpgtables.models import Table
 from fsttrpgcharloader.traitsmodels import Loader, list_of_actors
 import utilities
 
