@@ -3,7 +3,7 @@ from traits.api import *
 from traitsui.api import *
 
 from fsttrpgtables.models import Table
-from fsttrpgcharloader.traitsmodels import Loader, list_of_actors
+from fsttrpgcharloader.traitsmodels import CharacterName, list_of_actors
 import utilities
 
 quirks_table = Table('quirks')
@@ -100,9 +100,6 @@ class Affections(HasTraits):
 
 
 class Personality(HasTraits):
-    character = String()
-    load_character = Button()
-    loader = Instance(Loader, ())
     prime_motivation = Enum(prime_motivations_table.results())
     most_valued_person = Enum(most_valued_person_table.results())
     most_valued_posession = Enum(most_valued_pos_table.results())
@@ -124,7 +121,7 @@ class Personality(HasTraits):
     random_exmode = Button()
 
     random_all = Button()
-    upload = Button()
+
 
     def _random_motivation_fired(self):
         self.prime_motivation = prime_motivations_table.random_result()
@@ -157,36 +154,9 @@ class Personality(HasTraits):
         self.clothes.clothes = clothes_table.multiple_randoms(1, 1)
         self.affections.affections = affections_table.multiple_randoms(1, 1)
 
-    def _load_character_fired(self):
 
-        self.character = self.loader.selection
-        # print(str(list_of_actors.actors))
-        loaded_personality = list_of_actors.get_optional_value(self.character, 'personality')
-        if loaded_personality:
-            try:
-                self.prime_motivation = loaded_personality['motivation']
-                self.most_valued_person = loaded_personality['valued_person']
-                self.most_valued_posession = loaded_personality['valued_posession']
-                self.how_feels_about_most_people = loaded_personality['feels_about_people']
-                self.inmode = loaded_personality['inmode']
-                self.exmode = loaded_personality['exmode']
-                self.quirks.quirks = loaded_personality['quirks']
-                self.phobias.phobias = loaded_personality['phobias']
-                self.hairstyle.hairstyles = loaded_personality['hair']
-                self.clothes.clothes = loaded_personality['clothes']
-                self.affections.affections = loaded_personality['affections']
-                self.disorders.disorders = loaded_personality['disorders']
-            except Exception:
-                print('failed to load valid personality')
 
-    def _upload_fired(self):
-        utilities.save_character_info(role=self.loader.role, name=self.loader.selection,
-                                      prime_motivation=self.prime_motivation, m_valued_person=self.most_valued_person,
-                                      m_valued_posession=self.most_valued_posession,
-                                      feels_about_people=self.how_feels_about_most_people, inmode=self.inmode,
-                                      exmode=self.exmode, quirks=self.quirks.quirks, phobias=self.phobias.phobias,
-                                      disorders=self.disorders.disorders, hair=self.hairstyle.hairstyles,
-                                      clothes=self.clothes.clothes, affections=self.affections.affections)
+
 
     traits_view = View(
         HGroup(
@@ -223,56 +193,58 @@ class Personality(HasTraits):
                 Item('random_exmode', show_label=False)
             )
         ),
-        Item('random_all', show_label=False, springy=True)
-
+        Item('random_all', show_label=False)
     )
-    standalone_view = View(
-        HGroup(
-            Item('character'),
-            Item('loader'),
-            Item('load_character', show_label=False)
-        ),
-        HGroup(
-            Group(
-                Item('prime_motivation'),
-                Item('most_valued_person'),
-                Item('most_valued_posession'),
-                Item('how_feels_about_most_people'),
-                Item('inmode'),
-                Item('exmode'),
-                HGroup(
-                    Group(
-                        Item('quirks'),
-                        Item('disorders')
 
-                    ),
-                    Group(
-                        Item('hairstyle'),
-                        Item('clothes')
 
-                    ),
-                    Group(
-                        Item('affections'),
-                        Item('phobias'),
-                    )
-                )
-            ),
-            Group(
-                Item('random_motivation', show_label=False),
-                Item('random_valued_person', show_label=False),
-                Item('random_posession', show_label=False),
-                Item('random_feels', show_label=False),
-                Item('random_inmode', show_label=False),
-                Item('random_exmode', show_label=False)
-            )
-        ),
+class Standalone(HasTraits):
+    character_name = Instance(CharacterName, ())
+    personality = Instance(Personality, ())
+    upload = Button()
 
-        Item('random_all', show_label=False, springy=True),
+    view = View(
+        Item('character_name', style='custom', show_label=False),
+        Item('personality', style='custom', show_label=False),
         Item('upload', show_label=False)
-
     )
+
+    def _character_name_default(self):
+        return CharacterName(name_change_handler=self.load_personality)
+
+    def load_personality(self):
+
+        name = self.character_name.name.name
+        role = self.character_name.role
+        # print(str(list_of_actors.actors))
+        loaded_personality = list_of_actors.get_optional_value(name, 'personality')
+        if loaded_personality:
+            try:
+                self.personality.prime_motivation = loaded_personality['motivation']
+                self.personality.most_valued_person = loaded_personality['valued_person']
+                self.personality.most_valued_posession = loaded_personality['valued_posession']
+                self.personality.how_feels_about_most_people = loaded_personality['feels_about_people']
+                self.personality.inmode = loaded_personality['inmode']
+                self.personality.exmode = loaded_personality['exmode']
+                self.personality.quirks.quirks = loaded_personality['quirks']
+                self.personality.phobias.phobias = loaded_personality['phobias']
+                self.personality.hairstyle.hairstyles = loaded_personality['hair']
+                self.personality.clothes.clothes = loaded_personality['clothes']
+                self.personality.affections.affections = loaded_personality['affections']
+                self.personality.disorders.disorders = loaded_personality['disorders']
+            except Exception as e:
+                print('failed to load valid personality')
+                print(str(e))
+
+    def _upload_fired(self):
+        utilities.save_character_info(role=self.loader.role, name=self.loader.selection,
+                                      prime_motivation=self.prime_motivation, m_valued_person=self.most_valued_person,
+                                      m_valued_posession=self.most_valued_posession,
+                                      feels_about_people=self.how_feels_about_most_people, inmode=self.inmode,
+                                      exmode=self.exmode, quirks=self.quirks.quirks, phobias=self.phobias.phobias,
+                                      disorders=self.disorders.disorders, hair=self.hairstyle.hairstyles,
+                                      clothes=self.clothes.clothes, affections=self.affections.affections)
 
 
 if __name__ == '__main__':
-    p = Personality()
-    p.configure_traits(view='standalone_view')
+    st = Standalone()
+    st.configure_traits()
