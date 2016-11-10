@@ -41,7 +41,7 @@ class Personality(object):
         self.affections = TableValue(source_table_name='affections', random_method='multiple')
         self.all_fields_array = [self.prime_motivation, self.most_valued_person, self.most_valued_posession,
                                  self.how_feels_about_most_people, self.inmode, self.exmode, self.quirks,
-                                 self.disorders, self.phobias, self.hairstyle, self.clothes, self.affections]
+                                 self.phobias, self.hairstyle, self.clothes, self.affections]
 
     def assign_random_to_field(self, field_name):
         try:

@@ -17,6 +17,9 @@ class CharacterPersonalityTrait(BaseModel):
 
     @staticmethod
     def add_if_doesnt_exist(actor_role, actor_name, trait_type, trait_name):
+        if actor_name == "":
+            print('actors name is null')
+            return
         act = Actor.add_or_get(role=actor_role, name=actor_name)
         actor, created = CharacterPersonalityTrait.get_or_create(actor=act, trait_type=trait_type,
                                                                  trait_name=trait_name)
@@ -43,6 +46,9 @@ class Personality(BaseModel):
     @staticmethod
     def add(actor_role, actor_name, prime_motivation, most_valued_person, most_valued_pos, feels_about_people,
             inmode, exmode, quirks, phobias, disorders, hairs, clothing, affections):
+        if actor_name == "":
+            print('actors name is null')
+            return
         act = Actor.add_or_get(role=actor_role, name=actor_name)
         personality, created = Personality.get_or_create(actor=act,
                                                          defaults={'prime_motivation': prime_motivation,

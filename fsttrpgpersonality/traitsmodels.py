@@ -340,7 +340,7 @@ class PersonalityRandomizer(HasTraits):
 
 class Standalone(HasTraits):
     character_name = Instance(CharacterName, ())
-    personality = Instance(Personality, ())
+    personality = Instance(PersonalityRandomizer, ())
 
     view = View(
         Item('character_name', style='custom', show_label=False),
@@ -353,12 +353,13 @@ class Standalone(HasTraits):
         return CharacterName(name_change_handler=self.load_personality)
 
     def load_personality(self):
-        personality.load(role=self.character_name.role, name=self.character_name.get_name())
-        self.personality.update_from_model()
+        try:
+            personality.load(role=self.character_name.role, name=self.character_name.get_name())
+            self.personality.personality.update_from_model()
+        except Exception:
+            print('could not load the name')
 
 
 if __name__ == '__main__':
-    # st = Standalone()
-    # st.configure_traits()
-    s = PersonalityRandomizer()
-    s.configure_traits()
+    st = Standalone()
+    st.configure_traits()
