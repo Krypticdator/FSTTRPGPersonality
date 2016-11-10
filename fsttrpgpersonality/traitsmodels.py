@@ -1,6 +1,6 @@
 from __future__ import print_function
-from traits.api import *
-from traitsui.api import *
+from traits.api import HasTraits, List, Button, Enum, Instance
+from traitsui.api import View, Item, CheckListEditor, Group, HGroup, Handler, Action
 
 from fsttrpgtables.models import Table
 from fsttrpgcharloader.traitsmodels import CharacterName, list_of_actors
@@ -19,6 +19,17 @@ exmodes_table = Table('exmodes')
 clothes_table = Table('clothes')
 hair_table = Table('hair')
 affections_table = Table('affections')
+
+
+class PersonalityHandler(Handler):
+    def do_upload(self, UIInfo):
+        utilities.save_character_info(role=self.loader.role, name=self.loader.selection,
+                                      prime_motivation=self.prime_motivation, m_valued_person=self.most_valued_person,
+                                      m_valued_posession=self.most_valued_posession,
+                                      feels_about_people=self.how_feels_about_most_people, inmode=self.inmode,
+                                      exmode=self.exmode, quirks=self.quirks.quirks, phobias=self.phobias.phobias,
+                                      disorders=self.disorders.disorders, hair=self.hairstyle.hairstyles,
+                                      clothes=self.clothes.clothes, affections=self.affections.affections)
 
 
 class Phobias(HasTraits):
@@ -236,13 +247,18 @@ class Standalone(HasTraits):
                 print(str(e))
 
     def _upload_fired(self):
-        utilities.save_character_info(role=self.loader.role, name=self.loader.selection,
-                                      prime_motivation=self.prime_motivation, m_valued_person=self.most_valued_person,
-                                      m_valued_posession=self.most_valued_posession,
-                                      feels_about_people=self.how_feels_about_most_people, inmode=self.inmode,
-                                      exmode=self.exmode, quirks=self.quirks.quirks, phobias=self.phobias.phobias,
-                                      disorders=self.disorders.disorders, hair=self.hairstyle.hairstyles,
-                                      clothes=self.clothes.clothes, affections=self.affections.affections)
+        utilities.save_character_info(role=self.character_name.role, name=self.character_name.loader.selection,
+                                      prime_motivation=self.personality.prime_motivation,
+                                      m_valued_person=self.personality.most_valued_person,
+                                      m_valued_posession=self.personality.most_valued_posession,
+                                      feels_about_people=self.personality.how_feels_about_most_people,
+                                      inmode=self.personality.inmode,
+                                      exmode=self.personality.exmode, quirks=self.personality.quirks.quirks,
+                                      phobias=self.personality.phobias.phobias,
+                                      disorders=self.personality.disorders.disorders,
+                                      hair=self.personality.hairstyle.hairstyles,
+                                      clothes=self.personality.clothes.clothes,
+                                      affections=self.personality.affections.affections)
 
 
 if __name__ == '__main__':
