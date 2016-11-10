@@ -11,7 +11,9 @@ personality = PersonalityModel()
 
 class PersonalityHandler(Handler):
     def do_save(self, UIInfo):
-        personality.save(role=UIInfo.object.character_name.role, actor_name=UIInfo.object.character_name.get_name())
+        status = personality.save(role=UIInfo.object.character_name.role,
+                                  actor_name=UIInfo.object.character_name.get_name())
+        UIInfo.object.messages = status
 
 
 class ChangeListener(Handler):
@@ -241,6 +243,7 @@ class Personality(SendsSignal):
 
 
 class PersonalityRandomizer(HasTraits):
+
     personality = Instance(Personality, ())
     primem = String()
     valper = String()
@@ -340,10 +343,12 @@ class PersonalityRandomizer(HasTraits):
 
 class Standalone(HasTraits):
     character_name = Instance(CharacterName, ())
+    messages = String()
     personality = Instance(PersonalityRandomizer, ())
 
     view = View(
         Item('character_name', style='custom', show_label=False),
+        Item('messages', style='readonly'),
         Item('personality', style='custom', show_label=False),
         menubar=MenuBar(Menu(action_save, name='File')),
         handler=PersonalityHandler()

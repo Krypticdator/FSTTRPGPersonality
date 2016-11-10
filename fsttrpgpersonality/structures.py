@@ -68,6 +68,12 @@ class Personality(object):
         clo = self.clothes.value
         aff = self.affections.value
 
+        arr = [pm, mvper, mvpos, fap, inm, exm, qui, pho, dis, hai, clo, aff]
+
+        for cell in arr:
+            if cell is None:
+                return "one of the personality fields was empty, save failed"
+
         db_mgr = DBManager()
         db_mgr.personalities_table.add(actor_role=role, actor_name=actor_name, prime_motivation=pm,
                                        most_valued_person=mvper, most_valued_pos=mvpos, feels_about_people=fap,
@@ -78,6 +84,7 @@ class Personality(object):
             utilities.save_character_info(role=role, name=actor_name, prime_motivation=pm, m_valued_person=mvper,
                                           m_valued_posession=mvpos, feels_about_people=fap, inmode=inm, exmode=exm,
                                           quirks=qui, phobias=pho, disorders=dis, hair=hai, clothes=clo, affections=aff)
+        return 'save successful'
 
     def load(self, role, name):
         db_mgr = DBManager()
