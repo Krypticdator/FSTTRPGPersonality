@@ -149,3 +149,6 @@ fabric.properties
 .idea/
 
 fsttrpgpersonality/fuziontables.db
+/fsttrpgpersonality/personalities.db
+/fsttrpgpersonality/filepaths.db
+/fsttrpgpersonality/actors.db
