@@ -7,8 +7,13 @@ from database import DBManager
 class TableValue(object):
     def __init__(self, source_table_name, random_method='single', random_min=1, random_max=1):
         super(TableValue, self).__init__()
-        self.value = None
+
         self.source_table = Table(source_table_name)
+        if random_method == 'single':
+            self.value = self.source_table.results()[0]
+        else:
+            self.value = None
+        print(self.value)
         self.random_method = random_method
         self.random_min = random_min
         self.random_max = random_max
@@ -35,6 +40,7 @@ class Personality(object):
         self.exmode = TableValue(source_table_name='exmodes')
         self.quirks = TableValue(source_table_name='quirks', random_method='multiple', random_min=1, random_max=3)
         self.disorders = TableValue(source_table_name='disorders', random_method='multiple')
+        self.disorders.value = ['None']
         self.phobias = TableValue(source_table_name='phobias', random_method='multiple')
         self.hairstyle = TableValue(source_table_name='hair', random_method='multiple')
         self.clothes = TableValue(source_table_name='clothes', random_method='multiple')
