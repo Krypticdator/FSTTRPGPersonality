@@ -1,38 +1,8 @@
-from __future__ import print_function
+from traits.api import HasTraits, Method
 
-from fsttrpgcharloader.traitsmodels import CharacterName
-from traits.api import HasTraits, List, Button, Enum, Instance, String, Method, TraitError
-from traitsui.api import View, Item, CheckListEditor, Group, HGroup, Handler, Action, Menu, MenuBar, Tabbed
+from fsttrpgpersonality.structures import Personality as PersonalityModel
 
-from structures import Personality as PersonalityModel
-
-personality = PersonalityModel()
-
-
-class PersonalityHandler(Handler):
-    def do_save(self, UIInfo):
-        status = personality.save(role=UIInfo.object.character_name.role,
-                                  actor_name=UIInfo.object.character_name.get_name())
-        UIInfo.object.messages = status
-
-    def do_load(self, UIInfo):
-        try:
-            personality.load(role=UIInfo.object.character_name.role, name=UIInfo.object.character_name.get_name())
-            UIInfo.object.personality.personality.update_from_model()
-        except Exception:
-            print('could not load the name')
-
-
-class ChangeListener(Handler):
-    def object__updated_changed(self, info):
-        print('object changed')
-
-    def setattr(self, info, object, name, value):
-        Handler.setattr(self, info, object, name, value)
-
-
-action_save = Action(name='Save', action='do_save')
-action_load = Action(name='Load', action='do_load')
+PERSONALITY_TABLES = PersonalityModel()
 
 
 class SendsSignal(HasTraits):
@@ -45,13 +15,13 @@ class SendsSignal(HasTraits):
             print('signal method not defined')
 
 
+'''
 class Phobias(SendsSignal):
-    # phobias = List(editor=CheckListEditor(values=personality.phobias.source_table.results(), cols=6))
-    phobias = List()
+    phobias = List(editor=CheckListEditor(values=personality.phobias.source_table.results(), cols=6))
     random_phobia = Button()
 
     traits_view = View(
-        Item('phobias', editor=CheckListEditor(values=personality.phobias.source_table.results(), cols=6)),
+        Item('phobias'),
         Item('random_phobia', show_label=False)
     )
 
@@ -64,8 +34,7 @@ class Phobias(SendsSignal):
 
 
 class Disorders(SendsSignal):
-    # disorders = List(editor=CheckListEditor(values=personality.disorders.source_table.results(), cols=3))
-    disorders = List()
+    disorders = List(editor=CheckListEditor(values=personality.disorders.source_table.results(), cols=3))
     random_disorder = Button()
 
     def _random_disorder_fired(self):
@@ -76,8 +45,7 @@ class Disorders(SendsSignal):
         self.send_signal()
 
     view = View(
-        Item('disorders', style='custom',
-             editor=CheckListEditor(values=personality.disorders.source_table.results(), cols=3)),
+        Item('disorders', style='custom'),
         Item('random_disorder', show_label=False)
     )
 
@@ -378,4 +346,6 @@ class Standalone(HasTraits):
 
 if __name__ == '__main__':
     st = Standalone()
-    st.configure_traits()
+    st.configure_traits()'''
+
+''''''

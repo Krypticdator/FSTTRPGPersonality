@@ -1,8 +1,23 @@
+import os
+
 from fsttrpgcharloader.database import DBManager as ActorDBManager, Actor
 from fsttrpgtables.db import DBManager as TableManager
 from peewee import Model, SqliteDatabase, CharField, ForeignKeyField
 
-personality_db = SqliteDatabase('personalities.db')
+
+def find_or_create(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            result = os.path.join(root, name)
+            print('found db in: ' + str(result))
+            return result
+    print('didnt find any db, creating new: ' + name)
+    return name
+
+
+current_dir = os.path.dirname(__file__)
+database_name = find_or_create('personalities.db', current_dir)
+personality_db = SqliteDatabase(database_name)
 
 
 class BaseModel(Model):
@@ -46,10 +61,13 @@ class Personality(BaseModel):
     @staticmethod
     def add(actor_role, actor_name, prime_motivation, most_valued_person, most_valued_pos, feels_about_people,
             inmode, exmode, quirks, phobias, disorders, hairs, clothing, affections):
+        print('personality.add database method started')
         if actor_name == "":
             print('actors name is null')
             return
+        print('actor_name: ' + actor_name)
         act = Actor.add_or_get(role=actor_role, name=actor_name)
+
         personality, created = Personality.get_or_create(actor=act,
                                                          defaults={'prime_motivation': prime_motivation,
                                                                    'most_valued_person': most_valued_person,
@@ -58,6 +76,7 @@ class Personality(BaseModel):
                                                                    'inmode': inmode,
                                                                    'exmode': exmode})
         if created:
+            print('created new personality')
             for quirk in quirks:
                 CharacterPersonalityTrait.add_if_doesnt_exist(actor_role=actor_role, actor_name=actor_name,
                                                               trait_type='quirk', trait_name=quirk)
@@ -77,6 +96,8 @@ class Personality(BaseModel):
             for affection in affections:
                 CharacterPersonalityTrait.add_if_doesnt_exist(actor_role=actor_role, actor_name=actor_name,
                                                               trait_type='affection', trait_name=affection)
+        else:
+            print('personality already exists')
 
     def get_personality_of(self, actor_role, actor_name):
         act = Actor.get(Actor.role == actor_role, Actor.name == actor_name)

@@ -61,6 +61,7 @@ class Personality(object):
             field.get_random()
 
     def save(self, role, actor_name, upload_to_aws=False):
+        # print('Personality model class save')
         pm = self.prime_motivation.value
         mvper = self.most_valued_person.value
         mvpos = self.most_valued_posession.value
